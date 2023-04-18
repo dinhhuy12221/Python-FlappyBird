@@ -14,13 +14,7 @@ class Game():
         self.status = "start"
         self.score = 0
         self.font = pygame.font.Font(None, 40)
-
         self.data = Data()
-        record_text = ""
-        for i in self.data.selectHighestScore():
-            record_text += f"{i[0]}  {i[1]}"
-        self.record = self.font.render(record_text, True , (255,0,0))
-        self.record_rect = self.record.get_rect()
 
     def setupSprites(self):
         self.all_sprites_list = pygame.sprite.Group()
@@ -76,12 +70,19 @@ class Game():
     def displayRecordTable(self):
         image = pygame.image.load(r'img/record_table.png').convert_alpha()
         table = pygame.transform.scale(image,(400,500))
-        table_width = table.get_width()
-        table_height = table.get_height()
+        self.table_width = table.get_width()
+        self.table_height = table.get_height()
         self.table_rect = table.get_rect(center = (WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2.5))
         self.window.blit(table,self.table_rect)
-        self.record_rect.center = (table_width // 1.8,table_height // 4)
-        self.window.blit(self.record,self.record_rect)
+
+        record_text = ""
+        hs = self.data.selectHighestScore()
+        record_text += f"{hs[0][0]}     {hs[0][1]}\n\n"
+        for i in self.data.select():
+            record_text += "{0}     {1}\n".format(i[0],i[1])
+        # self.record = self.font.render(record_text, True , (255,0,0))
+        # self.record_rect = self.record.get_rect(topleft=(WINDOW_WIDTH // 2 - self.table_width // 2, WINDOW_HEIGHT // 2.5 - self.table_height //2))
+        self.displayText(record_text, (WINDOW_WIDTH // 2 - self.table_width // 2 + 35, WINDOW_HEIGHT // 2.5 - self.table_height //2 + 50), self.font, (255,0,0))
     
     def displayBack(self,pos_x,pos_y):
         image = pygame.image.load(r'img/return.png').convert_alpha()
@@ -99,7 +100,23 @@ class Game():
         for sprite in self.collision_sprites:
             if sprite.type == "Obstacle" and self.bird.pos.x > sprite.pos.x:
                 self.score += 1
-    
+
+    def displayText(self, text, pos, font, color):
+        collection = [word.split(' ') for word in text.splitlines()]
+        space = font.size(' ')[0]
+        x,y = pos
+        for lines in collection:
+            for words in lines:
+                word_surface = font.render(words, True, color)
+                word_width, word_height = word_surface.get_size()
+                if x + word_width > self.table_width:
+                    x = pos[0]
+                    y += word_height
+                self.window.blit(word_surface, (x,y))
+                x += word_width + space
+            x = pos[0]
+            y += word_height
+
     def displayScore(self):
         self.score_text = self.font.render(f"{self.score}", True, (255,0,0))
         self.score_text_rect = self.score_text.get_rect(center = (WINDOW_WIDTH // 2, WINDOW_HEIGHT // 5))
@@ -141,7 +158,7 @@ class Game():
                     if event.type == self.obtacle_timer and self.status == "running":
                         Obstacle([self.all_sprites_list, self.collision_sprites],1.6)
                         self.increaseScore()
-                    if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                    if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE and self.status == "running":
                         self.bird.jump()
                 
                 self.all_sprites_list.draw(self.window)

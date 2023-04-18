@@ -15,7 +15,7 @@ class Data:
         sql = "SELECT score, record_date FROM record ORDER BY id DESC LIMIT 5"
         self._cursor.execute(sql)
         result = self._cursor.fetchall()
-        return result
+        return list(result)
     
     def selectHighestScore(self):
         sql = "SELECT score, record_date FROM record WHERE score = (SELECT MAX(score) FROM record)"

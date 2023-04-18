@@ -83,7 +83,7 @@ class Obstacle(pygame.sprite.Sprite):
         #     self.image = pygame.transform.flip(self.image, False, True)
         #     self.rect = self.image.get_rect(midtop=(x, y))
         x = WINDOW_WIDTH  + randint(40, 100)
-        y =  WINDOW_HEIGHT // 2 + randint(-150,150)
+        y =  WINDOW_HEIGHT // 2 + randint(-200,100)
         surf = pygame.image.load(r'img/obstacle1.png').convert_alpha()
         self.image = pygame.transform.scale(surf, pygame.math.Vector2(WINDOW_WIDTH,WINDOW_HEIGHT * 1.4))
         self.rect = self.image.get_rect(center=(x,y))
