@@ -13,7 +13,7 @@ class Game():
         pygame.display.set_caption("FLAPPY BIRD")
         self.status = "start"
         self.score = 0
-        self.font = pygame.font.Font(None, 40)
+        self.font = pygame.font.Font("font/BD_Cartoon_Shout.ttf", 20)
         self.data = Data()
 
     def setupSprites(self):
@@ -75,14 +75,15 @@ class Game():
         self.table_rect = table.get_rect(center = (WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2.5))
         self.window.blit(table,self.table_rect)
 
-        record_text = ""
+        record_text = "    HIGHEST SCORE\n"
         hs = self.data.selectHighestScore()
         record_text += f"{hs[0][0]}     {hs[0][1]}\n\n"
+        record_text += "   RECENT SCORE\n"
         for i in self.data.select():
             record_text += "{0}     {1}\n".format(i[0],i[1])
         # self.record = self.font.render(record_text, True , (255,0,0))
         # self.record_rect = self.record.get_rect(topleft=(WINDOW_WIDTH // 2 - self.table_width // 2, WINDOW_HEIGHT // 2.5 - self.table_height //2))
-        self.displayText(record_text, (WINDOW_WIDTH // 2 - self.table_width // 2 + 35, WINDOW_HEIGHT // 2.5 - self.table_height //2 + 50), self.font, (255,0,0))
+        self.displayText(record_text, (WINDOW_WIDTH // 2 - self.table_width // 2 + 35, WINDOW_HEIGHT // 2.5 - self.table_height //2 + 50), self.font, FONT_COLOR)
     
     def displayBack(self,pos_x,pos_y):
         image = pygame.image.load(r'img/return.png').convert_alpha()
@@ -118,12 +119,11 @@ class Game():
             y += word_height
 
     def displayScore(self):
-        self.score_text = self.font.render(f"{self.score}", True, (255,0,0))
+        self.score_text = self.font.render(f"{self.score}", True, FONT_COLOR)
         self.score_text_rect = self.score_text.get_rect(center = (WINDOW_WIDTH // 2, WINDOW_HEIGHT // 5))
         self.window.blit(self.score_text,self.score_text_rect)
 
     def run(self):
-        self.clock.tick(FRAMERATE)
         self.setupSprites()
         running = True
 
